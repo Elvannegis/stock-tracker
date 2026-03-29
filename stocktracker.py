@@ -102,6 +102,24 @@ def search_product(name):
             return f"[{parts[0]}] {parts[1]} | Quantity: {parts[2]} | Price: {parts[3]}"
     return "Product not found"
 
+# TASK 4: lowstock komutu - Codex ile üretildi
+def lowstock():
+    if not os.path.exists(".stocktracker"):
+        return "Not initialized. Run: python stocktracker.py init"
+    f = open(".stocktracker/products.dat", "r")
+    lines = f.readlines()
+    f.close()
+    found = False
+    result = ""
+    for line in lines:
+        parts = line.strip().split("|")
+        if parts[5] == "1" and int(parts[2]) < 10:
+            found = True
+            result += f"WARNING: Low stock for {parts[1]}\n"
+    if not found:
+        return "All stocks are sufficient."
+    return result.strip()
+
 def not_implemented(command_name):
     return f"Command '{command_name}' will be implemented in future weeks."
 
@@ -128,7 +146,9 @@ elif sys.argv[1] == "search":
         print("Usage: python stocktracker.py search <name>")
     else:
         print(search_product(sys.argv[2]))
-elif sys.argv[1] in ["lowstock", "status"]:
+elif sys.argv[1] == "lowstock":
+    print(lowstock())
+elif sys.argv[1] == "status":
     print(not_implemented(sys.argv[1]))
 else:
     print(f"Unknown command: {sys.argv[1]}")
